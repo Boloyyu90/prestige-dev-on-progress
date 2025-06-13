@@ -7,6 +7,7 @@ import { MarketingHeader } from '@/shared/components/layout/header/marketing-hea
 import { Footer } from '@/shared/components/layout/footer';
 import { ScrollProgress } from '@/shared/design-system/components/animations/scroll-progress';
 
+
 interface MarketingLayoutProps {
   children: React.ReactNode;
 }

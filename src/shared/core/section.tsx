@@ -1,9 +1,13 @@
-import * as React from "react"
-import { cva, type VariantProps } from "class-variance-authority"
-import { cn } from "@/shared/lib/utils/cn"
+'use client';
+
+import * as React from "react";
+import { cva, type VariantProps } from "class-variance-authority";
+import { motion, HTMLMotionProps } from 'framer-motion';
+import { useIntersectionObserver } from '@/shared/hooks/use-intersection-observer';
+import { cn } from "@/shared/lib/utils/cn";
 
 const sectionVariants = cva(
-  "relative w-full",
+  "relative w-full overflow-hidden",
   {
     variants: {
       variant: {
@@ -11,8 +15,10 @@ const sectionVariants = cva(
         primary: "bg-primary text-primary-foreground",
         secondary: "bg-secondary text-secondary-foreground",
         muted: "bg-muted",
-        gradient: "bg-gradient-hero text-white",
-        glass: "glass",
+        gradient: "bg-gradient-to-br from-primary/5 via-secondary/5 to-background",
+        "gradient-primary": "bg-gradient-to-r from-primary to-primary/80",
+        "gradient-secondary": "bg-gradient-to-r from-secondary to-secondary/80",
+        glass: "bg-background/50 backdrop-blur-xl border border-border/50",
       },
       padding: {
         none: "",
@@ -23,43 +29,100 @@ const sectionVariants = cva(
       },
       container: {
         none: "",
-        default: "container-custom",
-        fluid: "px-4 sm:px-6 lg:px-8",
-        narrow: "container-custom max-w-4xl",
-        wide: "container-custom max-w-7xl",
+        default: "container mx-auto px-4 sm:px-6 lg:px-8",
+        narrow: "container mx-auto px-4 sm:px-6 lg:px-8 max-w-4xl",
+        wide: "container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl",
+        full: "px-4 sm:px-6 lg:px-8",
+      },
+      animation: {
+        none: "",
+        fade: "animate-on-scroll",
+        slide: "animate-on-scroll-slide",
+        scale: "animate-on-scroll-scale",
       }
     },
     defaultVariants: {
       variant: "default",
       padding: "default",
       container: "default",
+      animation: "fade",
     },
   }
-)
+);
 
-export interface SectionProps
-  extends React.HTMLAttributes<HTMLElement>,
+interface SectionProps
+  extends Omit<HTMLMotionProps<"section">, 'variants'>,
     VariantProps<typeof sectionVariants> {
-  as?: keyof JSX.IntrinsicElements
+  as?: keyof JSX.IntrinsicElements;
+  children: React.ReactNode;
+  parallax?: boolean;
+  parallaxOffset?: number;
 }
 
 const Section = React.forwardRef<HTMLElement, SectionProps>(
-  ({ className, variant, padding, container, as = "section", children, ...props }, ref) => {
-    const Component = as as any
+  ({
+     className,
+     variant,
+     padding,
+     container,
+     animation,
+     as = "section",
+     children,
+     parallax = false,
+     parallaxOffset = 50,
+     ...props
+   }, ref) => {
+    const { ref: observerRef, isIntersecting } = useIntersectionObserver({
+      threshold: 0.1,
+      triggerOnce: true
+    });
+
+    const Component = motion[as] as any;
+
+    const animationVariants = {
+      fade: {
+        hidden: { opacity: 0 },
+        visible: { opacity: 1, transition: { duration: 0.8, ease: "easeOut" } }
+      },
+      slide: {
+        hidden: { opacity: 0, y: 40 },
+        visible: { opacity: 1, y: 0, transition: { duration: 0.8, ease: "easeOut" } }
+      },
+      scale: {
+        hidden: { opacity: 0, scale: 0.95 },
+        visible: { opacity: 1, scale: 1, transition: { duration: 0.8, ease: "easeOut" } }
+      }
+    };
+
+    const parallaxProps = parallax ? {
+      style: {
+        transform: isIntersecting ? `translateY(0px)` : `translateY(${parallaxOffset}px)`,
+        transition: 'transform 0.8s ease-out'
+      }
+    } : {};
 
     return (
       <Component
-        ref={ref}
-        className={cn(sectionVariants({ variant, padding }), className)}
+        ref={(node: any) => {
+          observerRef.current = node;
+          if (typeof ref === 'function') ref(node);
+          else if (ref) ref.current = node;
+        }}
+        className={cn(sectionVariants({ variant, padding, animation }), className)}
+        variants={animation !== 'none' ? animationVariants[animation as keyof typeof animationVariants] : undefined}
+        initial={animation !== 'none' ? "hidden" : undefined}
+        animate={animation !== 'none' ? (isIntersecting ? "visible" : "hidden") : undefined}
+        {...parallaxProps}
         {...props}
       >
         <div className={cn(sectionVariants({ container }))}>
           {children}
         </div>
       </Component>
-    )
+    );
   }
-)
-Section.displayName = "Section"
+);
 
-export { Section, sectionVariants }
+Section.displayName = "Section";
+
+export { Section, sectionVariants };

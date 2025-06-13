@@ -1,21 +1,59 @@
-import { useState, useEffect } from 'react';
+'use client';
 
-export function useScrollProgress() {
-  const [progress, setProgress] = useState(0);
+import { useEffect, useState } from 'react';
+import { useMotionValue, useSpring } from 'framer-motion';
+
+export const useScrollProgress = () => {
+  const [scrollY, setScrollY] = useState(0);
+  const [scrollProgress, setScrollProgress] = useState(0);
+  const [isScrolling, setIsScrolling] = useState(false);
+
+  // Smooth spring animation for scroll progress
+  const smoothProgress = useMotionValue(0);
+  const springProgress = useSpring(smoothProgress, {
+    stiffness: 400,
+    damping: 40
+  });
 
   useEffect(() => {
-    const updateScrollProgress = () => {
-      const scrollTop = window.scrollY;
-      const docHeight = document.documentElement.scrollHeight - window.innerHeight;
-      const scrollProgress = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
-      setProgress(scrollProgress);
+    let scrollTimeout: NodeJS.Timeout;
+
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+      const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+      const progress = maxScroll > 0 ? (currentScrollY / maxScroll) * 100 : 0;
+
+      setScrollY(currentScrollY);
+      setScrollProgress(progress);
+      setIsScrolling(true);
+      smoothProgress.set(progress);
+
+      // Clear existing timeout
+      clearTimeout(scrollTimeout);
+
+      // Set new timeout to detect scroll end
+      scrollTimeout = setTimeout(() => {
+        setIsScrolling(false);
+      }, 150);
     };
 
-    window.addEventListener('scroll', updateScrollProgress);
-    updateScrollProgress();
+    window.addEventListener('scroll', handleScroll, { passive: true });
 
-    return () => window.removeEventListener('scroll', updateScrollProgress);
-  }, []);
+    // Initial call
+    handleScroll();
 
-  return progress;
-}
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      clearTimeout(scrollTimeout);
+    };
+  }, [smoothProgress]);
+
+  return {
+    scrollY,
+    scrollProgress,
+    smoothProgress: springProgress,
+    isScrolling,
+    isAtTop: scrollY < 50,
+    isNearBottom: scrollProgress > 90
+  };
+};
