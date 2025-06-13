@@ -1,64 +1,258 @@
 // src/app/page.tsx
-'use client';
+import dynamic from 'next/dynamic';
+import { Suspense } from 'react';
+import { LoadingSpinner } from '@/shared/components/feedback/loading-spinner';
+import { Metadata } from 'next';
 
-import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import Image from 'next/image';
+// Dynamic imports untuk performance optimization
+const HeroSection = dynamic(
+  () => import('@/features/marketing/components/hero-section'),
+  {
+    loading: () => (
+      <div className="h-screen flex items-center justify-center">
+        <LoadingSpinner size="lg" />
+      </div>
+    ),
+    ssr: true
+  }
+);
+
+const AboutSection = dynamic(
+  () => import('@/features/marketing/components/about-section'),
+  {
+    loading: () => (
+      <div className="h-96 flex items-center justify-center">
+        <LoadingSpinner />
+      </div>
+    ),
+    ssr: true
+  }
+);
+
+const BenefitsSection = dynamic(
+  () => import('@/features/marketing/components/benefits-section'),
+  {
+    loading: () => (
+      <div className="h-96 flex items-center justify-center">
+        <LoadingSpinner />
+      </div>
+    )
+  }
+);
+
+const FeaturesSection = dynamic(
+  () => import('@/features/marketing/components/features-section'),
+  {
+    loading: () => (
+      <div className="h-96 flex items-center justify-center">
+        <LoadingSpinner />
+      </div>
+    )
+  }
+);
+
+const PackagesSection = dynamic(
+  () => import('@/features/marketing/components/packages-showcase'),
+  {
+    loading: () => (
+      <div className="h-96 flex items-center justify-center">
+        <LoadingSpinner />
+      </div>
+    )
+  }
+);
+
+const TestimonialsSection = dynamic(
+  () => import('@/features/marketing/components/testimonials-section'),
+  {
+    loading: () => (
+      <div className="h-96 flex items-center justify-center">
+        <LoadingSpinner />
+      </div>
+    )
+  }
+);
+
+const FaqSection = dynamic(
+  () => import('@/features/marketing/components/faq-section'),
+  {
+    loading: () => (
+      <div className="h-96 flex items-center justify-center">
+        <LoadingSpinner />
+      </div>
+    )
+  }
+);
+
+// SEO Metadata
+export const metadata: Metadata = {
+  title: 'Prestige Academy - Platform Tryout CASN Terpercaya #1 di Indonesia',
+  description: 'Platform tryout online terpercaya untuk persiapan ujian CASN dengan sistem CAT yang terintegrasi. Raih impian menjadi ASN dengan persiapan terbaik bersama 50K+ peserta aktif.',
+  keywords: [
+    'tryout CPNS',
+    'tryout PPPK',
+    'CAT BKN',
+    'ujian CASN',
+    'simulasi ujian',
+    'persiapan CPNS',
+    'soal CPNS',
+    'platform tryout',
+    'belajar online',
+    'ASN'
+  ],
+  authors: [{ name: 'Prestige Academy' }],
+  creator: 'Prestige Academy',
+  publisher: 'Prestige Academy',
+  openGraph: {
+    title: 'Prestige Academy - Platform Tryout CASN Terpercaya',
+    description: 'Persiapkan diri dengan simulasi ujian yang mirip asli. 95% tingkat kelulusan, 50K+ peserta aktif. Raih impian menjadi ASN bersama Prestige Academy.',
+    type: 'website',
+    locale: 'id_ID',
+    url: process.env.NEXT_PUBLIC_APP_URL,
+    siteName: 'Prestige Academy',
+    images: [
+      {
+        url: '/images/og-image-home.jpg',
+        width: 1200,
+        height: 630,
+        alt: 'Prestige Academy - Platform Tryout CASN Terpercaya',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Prestige Academy - Platform Tryout CASN Terpercaya',
+    description: 'Persiapkan diri dengan simulasi ujian yang mirip asli. 95% tingkat kelulusan.',
+    images: ['/images/twitter-card-home.jpg'],
+    creator: '@prestigeacademy',
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
+  },
+  verification: {
+    google: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION,
+  },
+  alternates: {
+    canonical: process.env.NEXT_PUBLIC_APP_URL,
+  },
+};
+
+// JSON-LD Structured Data
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Organization',
+  name: 'Prestige Academy',
+  description: 'Platform tryout online terpercaya untuk persiapan ujian CASN dengan sistem CAT yang terintegrasi',
+  url: process.env.NEXT_PUBLIC_APP_URL,
+  logo: `${process.env.NEXT_PUBLIC_APP_URL}/images/logo.png`,
+  contactPoint: {
+    '@type': 'ContactPoint',
+    telephone: '+62-812-3456-7890',
+    contactType: 'customer service',
+    availableLanguage: ['Indonesian']
+  },
+  sameAs: [
+    'https://facebook.com/prestigeacademy',
+    'https://instagram.com/prestigeacademy',
+    'https://twitter.com/prestigeacademy',
+    'https://youtube.com/prestigeacademy'
+  ],
+  offers: {
+    '@type': 'AggregateOffer',
+    priceCurrency: 'IDR',
+    lowPrice: '0',
+    highPrice: '599000',
+    offerCount: '3'
+  },
+  aggregateRating: {
+    '@type': 'AggregateRating',
+    ratingValue: '4.9',
+    reviewCount: '1250',
+    bestRating: '5',
+    worstRating: '1'
+  }
+};
 
 export default function HomePage() {
-  const router = useRouter();
-
-  useEffect(() => {
-    // Auto redirect ke marketing page setelah 2 detik (diperpanjang sedikit)
-    const timer = setTimeout(() => {
-      router.replace('/marketing');
-    }, 2000);
-
-    return () => clearTimeout(timer);
-  }, [router]);
-
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary/10 via-background to-secondary/10 flex items-center justify-center relative overflow-hidden">
-      <div className="relative z-10 text-center space-y-12 px-4">
-        {/* Logo Section */}
-        <div className="animate-fade-in-up">
-          <div className="relative mx-auto mb-8">
+    <>
+      {/* JSON-LD Structured Data */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
 
-            <div className="relative">
-              <Image
-                src="/images/logo/logo-prestige.svg"
-                alt="Prestige Academy Logo"
-                width={140}
-                height={140}
-                className="mx-auto animate-float filter transition-all duration-300"
-                priority
-              />
-            </div>
-          </div>
+      {/* Hero Section - Critical, loaded immediately */}
+      <HeroSection />
 
-          <div className="space-y-3">
-            <h1 className="text-5xl md:text-6xl font-bold text-primary tracking-tight">
-              Prestige Academy
-            </h1>
-            <p className="text-xl text-muted-foreground font-medium max-w-md mx-auto leading-relaxed">
-              Platform Tryout CASN Terpercaya
-            </p>
+      {/* Other sections loaded with Suspense boundaries */}
+      <Suspense
+        fallback={
+          <div className="h-96 flex items-center justify-center">
+            <LoadingSpinner size="lg" />
           </div>
-        </div>
+        }
+      >
+        <AboutSection />
+      </Suspense>
 
-        {/* Enhanced Loading Section */}
-        <div className="space-y-6 animate-fade-in-up animation-delay-300">
-          <div className="space-y-2">
-            <p className="text-sm text-muted-foreground animate-pulse font-medium">
-              Mengalihkan ke halaman utama...
-            </p>
-            {/* Progress bar */}
-            <div className="w-48 mx-auto bg-muted rounded-full h-2 overflow-hidden">
-              <div className="h-full bg-gradient-to-r from-primary to-secondary rounded-full animate-progress"></div>
-            </div>
+      <Suspense
+        fallback={
+          <div className="h-96 flex items-center justify-center">
+            <LoadingSpinner size="lg" />
           </div>
-        </div>
-      </div>
-    </div>
+        }
+      >
+        <BenefitsSection />
+      </Suspense>
+
+      <Suspense
+        fallback={
+          <div className="h-96 flex items-center justify-center">
+            <LoadingSpinner size="lg" />
+          </div>
+        }
+      >
+        <FeaturesSection />
+      </Suspense>
+
+      <Suspense
+        fallback={
+          <div className="h-96 flex items-center justify-center">
+            <LoadingSpinner size="lg" />
+          </div>
+        }
+      >
+        <PackagesSection />
+      </Suspense>
+
+      <Suspense
+        fallback={
+          <div className="h-96 flex items-center justify-center">
+            <LoadingSpinner size="lg" />
+          </div>
+        }
+      >
+        <TestimonialsSection />
+      </Suspense>
+
+      <Suspense
+        fallback={
+          <div className="h-96 flex items-center justify-center">
+            <LoadingSpinner size="lg" />
+          </div>
+        }
+      >
+        <FaqSection />
+      </Suspense>
+    </>
   );
 }

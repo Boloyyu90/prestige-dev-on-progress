@@ -3,6 +3,8 @@ import { Poppins } from 'next/font/google'
 import './globals.css'
 import { AppProviders } from '@/shared/providers/app-providers'
 import { Toaster } from 'react-hot-toast'
+import { MarketingHeader } from '@/shared/components/layout/header/marketing-header'
+import { Footer } from '@/shared/components/layout/footer'
 
 const poppins = Poppins({
   subsets: ['latin'],
@@ -36,7 +38,13 @@ export default function RootLayout({
     <html lang="id" suppressHydrationWarning>
     <body className={`${poppins.variable} font-sans antialiased`}>
     <AppProviders>
-      {children}
+      <div className="min-h-screen flex flex-col">
+        <MarketingHeader />
+        <main className="flex-1">
+          {children}
+        </main>
+        <Footer />
+      </div>
       <Toaster
         position="top-right"
         toastOptions={{
