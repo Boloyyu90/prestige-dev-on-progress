@@ -32,6 +32,10 @@
     --header-height: 4rem;
     --sidebar-width: 16rem;
     --content-max-width: 80rem;
+
+    /* Theme Transition Properties */
+    --theme-transition-duration: 300ms;
+    --theme-transition-easing: cubic-bezier(0.4, 0, 0.2, 1);
   }
 
   .dark {
@@ -56,6 +60,41 @@
     --input: 217.2 32.6% 17.5%;
     --ring: 207 70% 39%;
   }
+
+  /* Theme Transition Base */
+  html.theme-transitions {
+    transition: color-scheme var(--theme-transition-duration) var(--theme-transition-easing);
+  }
+
+  html.theme-transitions *,
+  html.theme-transitions *::before,
+  html.theme-transitions *::after {
+    transition:
+            background-color var(--theme-transition-duration) var(--theme-transition-easing),
+            border-color var(--theme-transition-duration) var(--theme-transition-easing),
+            color var(--theme-transition-duration) var(--theme-transition-easing),
+            fill var(--theme-transition-duration) var(--theme-transition-easing),
+            stroke var(--theme-transition-duration) var(--theme-transition-easing),
+            opacity var(--theme-transition-duration) var(--theme-transition-easing),
+            box-shadow var(--theme-transition-duration) var(--theme-transition-easing),
+            backdrop-filter var(--theme-transition-duration) var(--theme-transition-easing);
+  }
+
+  /* Disable transitions during theme switch to prevent visual glitches */
+  html.theme-switching *,
+  html.theme-switching *::before,
+  html.theme-switching *::after {
+    transition: none !important;
+  }
+
+  /* Reduce motion for accessibility */
+  @media (prefers-reduced-motion: reduce) {
+    html.theme-transitions *,
+    html.theme-transitions *::before,
+    html.theme-transitions *::after {
+      transition-duration: 0.01ms !important;
+    }
+  }
 }
 
 @layer base {
@@ -73,21 +112,21 @@
     scroll-behavior: smooth;
   }
 
-  /* Custom Scrollbar */
+  /* Custom Scrollbar with theme support */
   ::-webkit-scrollbar {
     width: 8px;
   }
 
   ::-webkit-scrollbar-track {
-    @apply bg-gray-100;
+    @apply bg-muted;
   }
 
   ::-webkit-scrollbar-thumb {
-    @apply bg-gray-300 rounded-full;
+    @apply bg-muted-foreground/30 rounded-full;
   }
 
   ::-webkit-scrollbar-thumb:hover {
-    @apply bg-gray-400;
+    @apply bg-muted-foreground/50;
   }
 }
 
@@ -152,9 +191,16 @@
     @apply transform -translate-y-1;
   }
 
-  /* Glass Effect */
+  /* Glass Effect with theme support */
   .glass {
-    @apply bg-white/10 backdrop-blur-md border border-white/20;
+    background: hsl(var(--background) / 0.1);
+    backdrop-filter: blur(12px);
+    border: 1px solid hsl(var(--border) / 0.2);
+  }
+
+  .dark .glass {
+    background: hsl(var(--background) / 0.2);
+    border: 1px solid hsl(var(--border) / 0.3);
   }
 
   /* Card Variants */
@@ -178,6 +224,92 @@
 
   .btn-shimmer:hover::before {
     @apply translate-x-full;
+  }
+
+  /* Theme Toggle Specific Styles */
+  .theme-toggle-icon {
+    transition: all var(--theme-transition-duration) var(--theme-transition-easing);
+  }
+
+  .theme-toggle-icon.sun {
+    transform: rotate(0deg) scale(1);
+  }
+
+  .dark .theme-toggle-icon.sun {
+    transform: rotate(-90deg) scale(0);
+  }
+
+  .theme-toggle-icon.moon {
+    transform: rotate(90deg) scale(0);
+  }
+
+  .dark .theme-toggle-icon.moon {
+    transform: rotate(0deg) scale(1);
+  }
+
+  /* System theme indicator */
+  .system-theme-indicator::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 4px;
+    height: 4px;
+    background: hsl(var(--primary));
+    border-radius: 50%;
+    animation: pulse-indicator 2s infinite;
+  }
+
+  @keyframes pulse-indicator {
+    0%, 100% {
+      opacity: 0.5;
+      transform: translateX(-50%) scale(1);
+    }
+    50% {
+      opacity: 1;
+      transform: translateX(-50%) scale(1.2);
+    }
+  }
+
+  /* Theme preview cards */
+  .theme-preview {
+    border: 2px solid transparent;
+    transition: all var(--theme-transition-duration) var(--theme-transition-easing);
+  }
+
+  .theme-preview:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px hsl(var(--foreground) / 0.15);
+  }
+
+  .theme-preview.active {
+    border-color: hsl(var(--primary));
+    box-shadow: 0 4px 20px hsl(var(--primary) / 0.25);
+  }
+
+  /* Marketing gradient with theme support */
+  .marketing-gradient {
+    background: linear-gradient(135deg,
+    hsl(var(--background)) 0%,
+    hsl(var(--muted)) 50%,
+    hsl(var(--background)) 100%);
+  }
+
+  .dark .marketing-gradient {
+    background: linear-gradient(135deg,
+    hsl(var(--background)) 0%,
+    hsl(var(--muted)) 30%,
+    hsl(var(--background)) 100%);
+  }
+
+  /* Focus states dengan theme support */
+  .focus-visible-ring {
+    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2;
+  }
+
+  .dark .focus-visible-ring {
+    @apply focus-visible:ring-offset-background;
   }
 }
 
@@ -206,9 +338,10 @@
   }
 
   .responsive-margin {
-    @apply mx-4 sm:mx-6 lg:mx-8;
+    @apply mx-4 sm:mx-6 lg:px-8;
   }
-  /* Custom animations untuk melengkapi Tailwind */
+
+  /* Custom animations dengan theme support */
   @keyframes fade-in-up {
     from {
       opacity: 0;
@@ -309,6 +442,25 @@
     }
   }
 
+  /* Theme-specific animations */
+  @keyframes theme-switch-light {
+    from {
+      filter: brightness(0.8) contrast(1.2);
+    }
+    to {
+      filter: brightness(1) contrast(1);
+    }
+  }
+
+  @keyframes theme-switch-dark {
+    from {
+      filter: brightness(1.2) contrast(0.8);
+    }
+    to {
+      filter: brightness(1) contrast(1);
+    }
+  }
+
   /* Utility classes untuk animasi baru */
   .animate-float {
     animation: float 4s ease-in-out infinite;
@@ -318,12 +470,41 @@
     animation: progress 2s ease-out forwards;
   }
 
-  /* Drop shadow enhancement */
-  .drop-shadow-3xl {
-    filter: drop-shadow(0 35px 35px rgba(0, 0, 0, 0.25));
+  .animate-theme-switch-light {
+    animation: theme-switch-light var(--theme-transition-duration) ease-out;
   }
 
-  /* Utility classes */
+  .animate-theme-switch-dark {
+    animation: theme-switch-dark var(--theme-transition-duration) ease-out;
+  }
+
+  /* Enhanced shadow dengan theme support */
+  .shadow-elevation-1 {
+    box-shadow: 0 2px 4px hsl(var(--foreground) / 0.1);
+  }
+
+  .shadow-elevation-2 {
+    box-shadow: 0 4px 8px hsl(var(--foreground) / 0.1);
+  }
+
+  .shadow-elevation-3 {
+    box-shadow: 0 8px 16px hsl(var(--foreground) / 0.1);
+  }
+
+  .shadow-colored {
+    box-shadow: 0 8px 25px hsl(var(--primary) / 0.25);
+  }
+
+  .shadow-colored-secondary {
+    box-shadow: 0 8px 25px hsl(var(--secondary) / 0.25);
+  }
+
+  /* Drop shadow enhancement */
+  .drop-shadow-3xl {
+    filter: drop-shadow(0 35px 35px hsl(var(--foreground) / 0.25));
+  }
+
+  /* Enhanced utility classes */
   .animate-fade-in-up {
     animation: fade-in-up 0.6s ease-out forwards;
   }
@@ -357,10 +538,46 @@
     background-size: 200% 200%;
   }
 
+  /* Gradient text dengan theme support */
+  .gradient-text-animated {
+    background: linear-gradient(
+            90deg,
+            hsl(var(--primary)),
+            hsl(var(--secondary)),
+            hsl(var(--primary))
+    );
+    background-size: 200% 100%;
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: gradient-flow 3s ease-in-out infinite;
+  }
+
   /* Delay classes */
   .animation-delay-100 { animation-delay: 100ms; }
   .animation-delay-200 { animation-delay: 200ms; }
   .animation-delay-300 { animation-delay: 300ms; }
   .animation-delay-400 { animation-delay: 400ms; }
   .animation-delay-500 { animation-delay: 500ms; }
+  .animation-delay-600 { animation-delay: 600ms; }
+  .animation-delay-700 { animation-delay: 700ms; }
+  .animation-delay-800 { animation-delay: 800ms; }
+  .animation-delay-900 { animation-delay: 900ms; }
+  .animation-delay-1000 { animation-delay: 1000ms; }
+
+  /* High contrast mode support */
+  @media (prefers-contrast: high) {
+    .glass {
+      background: hsl(var(--background) / 0.95);
+      border: 2px solid hsl(var(--border));
+    }
+
+    .theme-preview {
+      border-width: 3px;
+    }
+
+    .focus-visible-ring {
+      @apply ring-4;
+    }
+  }
 }
