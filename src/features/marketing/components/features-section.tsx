@@ -1,301 +1,224 @@
 'use client';
 
 import { useState } from 'react';
-import { OptimizedImage } from '@/shared/design-system/components/animations/optimized-image';
+import Image from 'next/image';
 import { Button } from '@/shared/components/ui/button';
-import { AnimateOnScroll } from '@/shared/design-system/components/animations/animate-on-scroll';
-import { useIntersectionObserver } from '@/shared/hooks/use-intersection-observer';
-import { useInViewAnimation } from '@/shared/design-system/motion/hooks';
-import { SectionReveal } from '@/shared/design-system/components/animations/section-reveal';
-import { Grid } from '@/shared/components/layout/grid';
-import { Stack } from '@/shared/components/layout/stack';
-import { ParallaxContainer } from '@/shared/design-system/components/animations/parallax-container';
-import { FloatingElement } from '@/shared/design-system/components/animations/floating-element';
-import { EntranceAnimation } from '@/shared/design-system/components/animations/entrance-animation';
-import { cn } from '@/shared/lib/utils/cn';
-import { Check, ChevronDown, Zap } from 'lucide-react';
+import { Card } from '@/shared/components/ui/card';
+import { Section } from '@/shared/core/section';
+import { Heading, Text } from '@/shared/core/typography';
 
 interface Feature {
     id: string;
     title: string;
     icon: string;
-    description: string;
-    benefits: string[];
-    mockup: string;
 }
 
 const FeaturesSection = () => {
     const [activeFeature, setActiveFeature] = useState('simulasi');
-    const { ref, isIntersecting } = useIntersectionObserver({
-        threshold: 0.1,
-        rootMargin: '50px',
-    });
-
-    const { ref: sectionRef, variants: containerVariants, animate, initial } = useInViewAnimation('fadeInUp', {
-        threshold: 0.1,
-        stagger: true,
-        staggerDelay: 0.3
-    });
 
     const features: Feature[] = [
-        {
-            id: 'simulasi',
-            title: 'Simulasi Nyata',
-            icon: '/icons/features/to-do-list.svg',
+        { id: 'simulasi', title: 'Simulasi Nyata', icon: '/images/icons/features/to-do-list.svg' },
+        { id: 'statistik', title: 'Sistem Statistik', icon: '/images/icons/features/statistic.svg' },
+        { id: 'peringkat', title: 'Sistem Peringkat', icon: '/images/icons/features/ranking.svg' }
+    ];
+
+    const featureContent = {
+        simulasi: {
+            title: 'Simulasi Ujian Mirip Asli',
             description: 'Rasakan pengalaman ujian yang sesungguhnya dengan sistem tryout yang memberikan pengalaman ujian asli',
             benefits: [
                 'Materi & soal terbaru',
                 'Analisis hasil otomatis',
                 'Simulasi ujian real-time'
             ],
-            mockup: '/images/mockups/laptop-mockup-ujian.png'
+            mockup: '/images/illustrations/features/laptop-mockup-ujian.png'
         },
-        {
-            id: 'statistik',
-            title: 'Sistem Statistik',
-            icon: '/icons/features/statistic.svg',
+        statistik: {
+            title: 'Sistem Statistik Lengkap',
             description: 'Pantau perkembangan belajar dengan analisis statistik yang komprehensif dan mudah dipahami',
             benefits: [
                 'Grafik perkembangan detail',
                 'Analisis kelemahan & kekuatan',
                 'Laporan performa real-time'
             ],
-            mockup: '/images/mockups/laptop-mockup-statistik.png'
+            mockup: '/images/illustrations/features/laptop-mockup-ujian.png'
         },
-        {
-            id: 'peringkat',
-            title: 'Sistem Peringkat',
-            icon: '/icons/features/ranking.svg',
+        peringkat: {
+            title: 'Sistem Peringkat Kompetitif',
             description: 'Bersaing dengan peserta lain dan lihat posisi peringkat untuk memotivasi belajar lebih baik',
             benefits: [
                 'Leaderboard nasional',
                 'Ranking berdasarkan kategori',
                 'Kompetisi mingguan & bulanan'
             ],
-            mockup: '/images/mockups/laptop-mockup-ranking.png'
+            mockup: '/images/illustrations/features/laptop-mockup-ujian.png'
         }
-    ];
+    };
 
-    const activeFeatureData = features.find(f => f.id === activeFeature) || features[0];
+    const currentFeature = featureContent[activeFeature as keyof typeof featureContent];
 
     return (
-      <section className="section bg-background relative overflow-hidden" ref={ref}>
-          {/* Background Pattern using design system */}
+      <Section
+        variant="muted"
+        padding="xl"
+        container="wide"
+        className="relative overflow-hidden"
+      >
+          {/* Background Pattern */}
           <div className="absolute inset-0 opacity-5">
-              <ParallaxContainer speed={0.3} className="absolute top-0 left-0">
-                  <FloatingElement intensity="subtle" speed="slow">
-                      <div className="w-72 h-72 bg-primary rounded-full -translate-x-1/2 -translate-y-1/2" />
-                  </FloatingElement>
-              </ParallaxContainer>
-
-              <ParallaxContainer speed={-0.2} className="absolute bottom-0 right-0">
-                  <FloatingElement intensity="normal" speed="normal">
-                      <div className="w-96 h-96 bg-secondary rounded-full translate-x-1/2 translate-y-1/2" />
-                  </FloatingElement>
-              </ParallaxContainer>
+              <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(50,116,152,0.3),transparent_50%)]"></div>
           </div>
 
-          <div className="container relative z-10" ref={sectionRef}>
-              {/* Header using design system */}
-              <EntranceAnimation variant="fadeInUp" className="text-center mb-16">
-                  <div className="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-2 rounded-full text-sm font-medium mb-6">
-                      <Zap className="w-4 h-4" />
-                      Fitur Unggulan
+          <div className="relative z-10 space-y-16">
+              {/* Header */}
+              <div className="text-center space-y-4 animate-fade-in-up">
+                  <Heading
+                    as="h2"
+                    size="display-md"
+                    align="center"
+                    className="text-foreground"
+                  >
+                      Fitur Unggulan Prestige Academy
+                  </Heading>
+                  <Text
+                    size="lg"
+                    align="center"
+                    className="text-muted-foreground max-w-3xl mx-auto"
+                  >
+                      Persiapkan diri dengan pengalaman terbaik berbasis riset untuk menghadapi ujian di depan mu
+                  </Text>
+              </div>
+
+              {/* Feature Navigation */}
+              <div className="flex justify-center">
+                  <Card
+                    variant="default"
+                    size="sm"
+                    className="p-2 shadow-medium animate-scale-in"
+                  >
+                      <div className="flex rounded-lg overflow-hidden">
+                          {features.map((feature, index) => (
+                            <button
+                              key={feature.id}
+                              onClick={() => setActiveFeature(feature.id)}
+                              className={`relative flex items-center gap-3 px-6 py-4 transition-all duration-300 ${
+                                activeFeature === feature.id
+                                  ? 'bg-primary text-white shadow-colored'
+                                  : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground'
+                              }`}
+                            >
+                                <div className={`w-8 h-8 rounded-full flex items-center justify-center transition-all duration-300 ${
+                                  activeFeature === feature.id
+                                    ? 'bg-white/20'
+                                    : 'bg-muted'
+                                }`}>
+                                    <Image
+                                      src={feature.icon}
+                                      alt={feature.title}
+                                      width={16}
+                                      height={16}
+                                      className={`transition-all duration-300 ${
+                                        activeFeature === feature.id ? 'brightness-0 invert' : 'opacity-70'
+                                      }`}
+                                    />
+                                </div>
+                                <span className="font-medium whitespace-nowrap">{feature.title}</span>
+                            </button>
+                          ))}
+                      </div>
+                  </Card>
+              </div>
+
+              {/* Feature Content */}
+              <div className="grid lg:grid-cols-2 gap-16 items-center">
+                  {/* Image */}
+                  <div className="relative animate-fade-in">
+                      <div className="absolute inset-0 z-0 flex items-center justify-center">
+                          <Image
+                            src="/images/illustrations/features/features-asset.svg"
+                            alt="Background Pattern"
+                            width={600}
+                            height={400}
+                            className="object-contain opacity-30"
+                          />
+                      </div>
+
+                      <div className="relative z-10 animate-float">
+                          <Image
+                            src={currentFeature.mockup}
+                            alt="Feature Mockup"
+                            width={600}
+                            height={400}
+                            className="w-full h-auto transition-all duration-500"
+                            priority
+                          />
+                      </div>
                   </div>
 
-                  <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-6">
-                      Fitur Unggulan{' '}
-                      <span className="gradient-text-animated">Prestige Academy</span>
-                  </h2>
-                  <p className="text-lg text-muted-foreground max-w-3xl mx-auto leading-relaxed text-pretty">
-                      Persiapkan diri dengan pengalaman terbaik berbasis riset untuk menghadapi ujian di depan mu
-                  </p>
-              </EntranceAnimation>
+                  {/* Content */}
+                  <div className="space-y-8 animate-slide-in-right">
+                      <div className="space-y-4">
+                          <Heading
+                            as="h3"
+                            size="lg"
+                            className="leading-tight"
+                          >
+                              {currentFeature.title}
+                          </Heading>
 
-              <div className="max-w-6xl mx-auto">
-                  {/* Features Navigation using design system */}
-                  <SectionReveal direction="up" delay={0.2} className="mb-12">
-                      <div className="card-base p-2 shadow-elevation-2 mx-auto max-w-4xl">
-                          <Grid cols={1} responsive={{ md: 3 }} gap="sm">
-                              {features.map((feature, index) => (
-                                <button
-                                  key={feature.id}
-                                  onClick={() => setActiveFeature(feature.id)}
-                                  className={cn(
-                                    'relative flex items-center gap-4 p-4 rounded-xl transition-all duration-300 text-left w-full',
-                                    'focus-visible-ring',
-                                    activeFeature === feature.id
-                                      ? 'bg-primary text-primary-foreground shadow-elevation-2 scale-105'
-                                      : 'hover:bg-muted text-muted-foreground hover:text-foreground'
-                                  )}
-                                  aria-pressed={activeFeature === feature.id}
-                                  role="tab"
-                                  tabIndex={0}
-                                >
-                                    {/* Icon */}
-                                    <div className={cn(
-                                      'w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0 transition-all duration-300',
-                                      activeFeature === feature.id
-                                        ? 'bg-primary-foreground/20'
-                                        : 'bg-muted'
-                                    )}>
-                                        <OptimizedImage
-                                          src={feature.icon}
-                                          alt={`${feature.title} icon`}
-                                          width={24}
-                                          height={24}
-                                          className={cn(
-                                            'transition-all duration-300',
-                                            activeFeature === feature.id
-                                              ? 'brightness-0 invert'
-                                              : 'opacity-70'
-                                          )}
-                                        />
-                                    </div>
-
-                                    {/* Content */}
-                                    <div className="flex-1 min-w-0">
-                                        <h3 className="font-semibold text-base md:text-lg mb-1 truncate">
-                                            {feature.title}
-                                        </h3>
-                                        <p className={cn(
-                                          'text-sm opacity-80 hidden md:block',
-                                          activeFeature === feature.id
-                                            ? 'text-primary-foreground/80'
-                                            : 'text-muted-foreground'
-                                        )}>
-                                            {feature.description.slice(0, 50)}...
-                                        </p>
-                                    </div>
-
-                                    {/* Active Indicator */}
-                                    {activeFeature === feature.id && (
-                                      <div className="absolute inset-0 rounded-xl ring-2 ring-primary/20 ring-offset-2" />
-                                    )}
-                                </button>
-                              ))}
-                          </Grid>
+                          <Text
+                            size="lg"
+                            className="leading-relaxed text-muted-foreground"
+                          >
+                              {currentFeature.description}
+                          </Text>
                       </div>
-                  </SectionReveal>
 
-                  {/* Feature Content using design system Grid */}
-                  <Grid cols={1} responsive={{ lg: 2 }} gap="xl" className="items-center">
-                      {/* Left - Visual */}
-                      <SectionReveal direction="left" delay={0.3} className="order-2 lg:order-1">
-                          <div className="relative">
-                              {/* Background Decoration using design system gradients */}
-                              <div className="absolute inset-0 marketing-gradient rounded-3xl transform rotate-3" />
-                              <div className="absolute inset-0 bg-gradient-to-tr from-secondary/5 to-primary/5 rounded-3xl transform -rotate-2" />
+                      {/* Benefits */}
+                      <div className="space-y-4">
+                          {currentFeature.benefits.map((benefit, index) => (
+                            <div
+                              key={index}
+                              className="flex items-center gap-4 animate-slide-in-left"
+                              style={{ animationDelay: `${index * 100}ms` }}
+                            >
+                                <div className="w-8 h-8 rounded-full bg-secondary flex items-center justify-center flex-shrink-0 shadow-colored-secondary">
+                                    <svg
+                                      className="w-4 h-4 text-white"
+                                      fill="none"
+                                      viewBox="0 0 24 24"
+                                      stroke="currentColor"
+                                    >
+                                        <path
+                                          strokeLinecap="round"
+                                          strokeLinejoin="round"
+                                          strokeWidth={3}
+                                          d="M5 13l4 4L19 7"
+                                        />
+                                    </svg>
+                                </div>
+                                <Text weight="medium" className="text-foreground">
+                                    {benefit}
+                                </Text>
+                            </div>
+                          ))}
+                      </div>
 
-                              {/* Main Content using design system card */}
-                              <div className="relative card-base p-8 shadow-elevation-3">
-                                  {/* Feature Image */}
-                                  <div className="aspect-video rounded-2xl overflow-hidden bg-gradient-to-br from-muted/50 to-muted mb-6">
-                                      <OptimizedImage
-                                        src={activeFeatureData.mockup}
-                                        alt={`${activeFeatureData.title} mockup`}
-                                        width={600}
-                                        height={400}
-                                        className="w-full h-full object-cover transition-all duration-500"
-                                        priority={activeFeature === 'simulasi'}
-                                      />
-                                  </div>
-
-                                  {/* Features Preview using design system Grid */}
-                                  <Grid cols={3} gap="md">
-                                      {activeFeatureData.benefits.map((benefit, index) => (
-                                        <div
-                                          key={index}
-                                          className="text-center p-3 rounded-xl bg-muted hover:bg-muted/80 transition-colors"
-                                        >
-                                            <div className="w-8 h-8 bg-primary/10 rounded-lg flex items-center justify-center mx-auto mb-2">
-                                                <Check className="w-4 h-4 text-primary" />
-                                            </div>
-                                            <p className="text-xs font-medium text-foreground leading-tight">
-                                                {benefit}
-                                            </p>
-                                        </div>
-                                      ))}
-                                  </Grid>
-                              </div>
-                          </div>
-                      </SectionReveal>
-
-                      {/* Right - Content */}
-                      <SectionReveal direction="right" delay={0.4} className="order-1 lg:order-2">
-                          <Stack direction="vertical" spacing="lg">
-                              {/* Feature Title & Description */}
-                              <div>
-                                  <h3 className="text-2xl md:text-3xl lg:text-4xl font-bold text-foreground mb-4 leading-tight">
-                                      {activeFeatureData.title.replace(' ', ' ')}
-                                      <span className="block text-primary">Mirip Asli</span>
-                                  </h3>
-
-                                  <p className="text-lg text-muted-foreground leading-relaxed text-pretty">
-                                      {activeFeatureData.description}
-                                  </p>
-                              </div>
-
-                              {/* Benefits List */}
-                              <div>
-                                  <h4 className="text-lg font-semibold text-foreground mb-4">
-                                      Keunggulan Fitur:
-                                  </h4>
-                                  <Stack direction="vertical" spacing="sm">
-                                      {activeFeatureData.benefits.map((benefit, index) => (
-                                        <div
-                                          key={index}
-                                          className="flex items-start gap-3 group"
-                                        >
-                                            <div className="w-6 h-6 rounded-full bg-secondary flex items-center justify-center flex-shrink-0 mt-0.5 group-hover:scale-110 transition-transform">
-                                                <Check className="w-3.5 h-3.5 text-secondary-foreground" strokeWidth={3} />
-                                            </div>
-                                            <span className="text-muted-foreground font-medium leading-relaxed">
-                          {benefit}
-                        </span>
-                                        </div>
-                                      ))}
-                                  </Stack>
-                              </div>
-
-                              {/* Statistics using design system Grid */}
-                              <Grid cols={2} gap="md" className="p-6 marketing-gradient rounded-2xl">
-                                  <div className="text-center">
-                                      <div className="text-2xl md:text-3xl font-bold text-primary mb-1 tabular-nums">
-                                          {isIntersecting ? '95%' : '0%'}
-                                      </div>
-                                      <p className="text-sm text-muted-foreground font-medium">
-                                          Akurasi Simulasi
-                                      </p>
-                                  </div>
-                                  <div className="text-center">
-                                      <div className="text-2xl md:text-3xl font-bold text-secondary mb-1 tabular-nums">
-                                          {isIntersecting ? '10K+' : '0'}
-                                      </div>
-                                      <p className="text-sm text-muted-foreground font-medium">
-                                          Bank Soal
-                                      </p>
-                                  </div>
-                              </Grid>
-
-                              {/* CTA using design system Button */}
-                              <div className="pt-4">
-                                  <Button
-                                    size="lg"
-                                    variant="default"
-                                    animation="lift"
-                                    className="group"
-                                  >
-                                      Coba Fitur Ini
-                                      <ChevronDown className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
-                                  </Button>
-                              </div>
-                          </Stack>
-                      </SectionReveal>
-                  </Grid>
+                      {/* CTA */}
+                      <div className="pt-4">
+                          <Button
+                            size="xl"
+                            variant="gradient"
+                            animation="hover"
+                            className="font-semibold shadow-large"
+                          >
+                              Pelajari Lebih Lanjut!
+                          </Button>
+                      </div>
+                  </div>
               </div>
           </div>
-      </section>
+      </Section>
     );
 };
 

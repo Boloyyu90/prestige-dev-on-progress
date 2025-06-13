@@ -1,40 +1,65 @@
-import { cn } from '@/lib/utils/cn';
-import { motion } from 'framer-motion';
-import { useInView } from 'react-intersection-observer';
+import * as React from "react"
+import { cva, type VariantProps } from "class-variance-authority"
+import { cn } from "@/shared/lib/utils/cn"
 
-interface SectionProps {
-  children: React.ReactNode;
-  className?: string;
-  animate?: boolean;
-  delay?: number;
-  id?: string;
+const sectionVariants = cva(
+  "relative w-full",
+  {
+    variants: {
+      variant: {
+        default: "bg-background",
+        primary: "bg-primary text-primary-foreground",
+        secondary: "bg-secondary text-secondary-foreground",
+        muted: "bg-muted",
+        gradient: "bg-gradient-hero text-white",
+        glass: "glass",
+      },
+      padding: {
+        none: "",
+        sm: "py-8 md:py-12",
+        default: "py-12 md:py-16 lg:py-20",
+        lg: "py-16 md:py-20 lg:py-24",
+        xl: "py-20 md:py-24 lg:py-32",
+      },
+      container: {
+        none: "",
+        default: "container-custom",
+        fluid: "px-4 sm:px-6 lg:px-8",
+        narrow: "container-custom max-w-4xl",
+        wide: "container-custom max-w-7xl",
+      }
+    },
+    defaultVariants: {
+      variant: "default",
+      padding: "default",
+      container: "default",
+    },
+  }
+)
+
+export interface SectionProps
+  extends React.HTMLAttributes<HTMLElement>,
+    VariantProps<typeof sectionVariants> {
+  as?: keyof JSX.IntrinsicElements
 }
 
-export function Section({ children, className, animate = true, delay = 0, id }: SectionProps) {
-  const { ref, inView } = useInView({ threshold: 0.1, triggerOnce: true });
+const Section = React.forwardRef<HTMLElement, SectionProps>(
+  ({ className, variant, padding, container, as = "section", children, ...props }, ref) => {
+    const Component = as as any
 
-  if (!animate) {
     return (
-      <section id={id} className={cn('py-16 md:py-24 lg:py-32', className)}>
-        <div className="container mx-auto px-4">
+      <Component
+        ref={ref}
+        className={cn(sectionVariants({ variant, padding }), className)}
+        {...props}
+      >
+        <div className={cn(sectionVariants({ container }))}>
           {children}
         </div>
-      </section>
-    );
+      </Component>
+    )
   }
+)
+Section.displayName = "Section"
 
-  return (
-    <motion.section
-      ref={ref}
-      id={id}
-      className={cn('py-16 md:py-24 lg:py-32', className)}
-      initial={{ opacity: 0, y: 20 }}
-      animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-      transition={{ duration: 0.6, delay }}
-    >
-      <div className="container mx-auto px-4">
-        {children}
-      </div>
-    </motion.section>
-  );
-}
+export { Section, sectionVariants }
