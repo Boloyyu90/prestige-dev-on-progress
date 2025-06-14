@@ -311,6 +311,7 @@
   .dark .focus-visible-ring {
     @apply focus-visible:ring-offset-background;
   }
+
 }
 
 @layer utilities {

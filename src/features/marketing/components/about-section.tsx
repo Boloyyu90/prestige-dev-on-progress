@@ -16,12 +16,12 @@ const AboutSection = () => {
     <section className="py-16 md:py-20 lg:py-24 animate-fade-in">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         {/* Announcement Banner */}
-        <div className="mb-16 flex justify-center animate-bounce-subtle">
+        <div className="mb-16 flex justify-center">
           <div className="inline-flex items-center rounded-full bg-white border border-gray-200 px-6 py-3 shadow-soft hover:shadow-medium transition-all duration-300">
             <Text size="sm" weight="medium" className="text-gray-800">
               Tingkatkan nilai dengan simulasi berbasis riset!
             </Text>
-            <Text size="sm" weight="medium" className="ml-2 text-primary whitespace-nowrap">
+            <Text size="sm" weight="semibold" className="ml-2 text-primary whitespace-nowrap">
               Jadilah peserta berikutnya →
             </Text>
           </div>
@@ -31,14 +31,13 @@ const AboutSection = () => {
           {/* Image */}
           <div className="lg:order-1 order-2 animate-slide-in-left">
             <div className="relative max-w-lg mx-auto lg:mx-0">
-              <div className="absolute inset-0 bg-gradient-to-r from-primary/20 to-secondary/20 rounded-3xl blur-3xl"></div>
               <div className="relative">
                 <Image
-                  src="/images/illustrations/about/about-asset.svg"
+                  src="/images/illustrations/marketing/about-asset.svg"
                   alt="About Prestige Academy"
                   width={550}
                   height={450}
-                  className="w-full h-auto animate-float"
+                  className="w-full h-auto animate-bounce-subtle"
                   priority
                 />
               </div>
@@ -83,7 +82,7 @@ const AboutSection = () => {
                 <Badge
                   key={index}
                   variant="secondary"
-                  className="bg-gradient-to-r from-primary/10 to-secondary/10 text-primary border border-primary/20 px-4 py-2 text-sm font-medium animate-scale-in"
+                  className="bg-primary/10 text-primary border border-primary/20 px-4 py-2 text-sm font-medium animate-scale-in"
                   style={{ animationDelay: `${index * 100}ms` }}
                 >
                   {feature}

@@ -58,22 +58,22 @@ const BenefitsSection = () => {
         </div>
 
         {/* Decorative Assets */}
-        <div className="absolute top-40 left-0 pointer-events-none opacity-30">
+        <div className="absolute top-40 left-0 pointer-events-none">
           <Image
             src="/images/backgrounds/benefit-asset-top.svg"
             alt=""
             width={150}
             height={150}
-            className="object-contain animate-float"
+            className="object-contain"
           />
         </div>
-        <div className="absolute bottom-0 right-0 pointer-events-none opacity-30">
+        <div className="absolute bottom-0 right-0 pointer-events-none">
           <Image
             src="/images/backgrounds/benefit-asset-bottom.svg"
             alt=""
             width={150}
             height={150}
-            className="object-contain animate-float"
+            className="object-contain"
             style={{ animationDelay: '1s' }}
           />
         </div>
